@@ -98,7 +98,16 @@ public:
             }
         }
     }
-
+    void printTreeAsArray() {
+        cout << "Printing Binary Tree As Array" << endl;
+            for (int i = 0; i < 100; i++)
+            {
+                if (myBinaryTree[i] != '\0') {
+                    std::cout << static_cast<char>(myBinaryTree[i]) << " ";
+                }
+            }
+        }
+    
 private:
     int myBinaryTree[100];
 
@@ -147,7 +156,6 @@ private:
         }
         cout<<endl;
     }
-
     void buildTree(char array[], int size) {
         for (int i = 0; i < size; i++) {
             if (i == 0) {
@@ -164,5 +172,5 @@ private:
             }
         }
     }
-
+    
 };
