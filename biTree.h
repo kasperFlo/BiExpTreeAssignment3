@@ -10,16 +10,12 @@ public:
     BiExpTree(){
 
         // setRoot('A');
-
         // set_left('B', 0);
         // set_right('C', 0);
-
         // set_left('D', 1);
         // set_right('E', 1);
-
         // set_left('1', 2);
         // set_right('2', 2);
-
         // set_left(1, 3);
         // set_right(2, 3);
 
@@ -28,41 +24,36 @@ public:
 
     void createExp(const string exp)
     {
-
         int count = exp.length();
         cout << "The length of the expression is: " << count << endl;
         cout << "The expression is: " << exp << endl;
-
-        char *devidedArray = new char[count];
 
         for (int i = 0; i < count; i++)
         {
             if (isdigit(exp[i]))
             {
                 // cout << "element Num " << i << " : " << exp[i] << " is a digit " << endl;
-                addToLastInArray(exp[i], devidedArray, count);
+                addToLastInArray(exp[i], myBinaryTree, count);
             }
             else
             {
                 // cout << i << " : " << exp[i] << " is not a digit " << endl;
-                addToFirstInArray(exp[i], devidedArray, count);
+                addToFirstInArray(exp[i], myBinaryTree, count);
             }
-            // cout << "---\nThe devided array is: ";
-            // printArray(devidedArray, count);
         }
 
         int firstNonNumber = 0;
-        for (int i = count; i > 0; i--)
+        for (int i = count - 1; i > 0; i--)
         {
             if (!isdigit(myBinaryTree[i]))
             {
                 firstNonNumber = i;
+                break;
             }
         }
-        reverseArray(devidedArray, count, firstNonNumber);
 
-        cout << "building tree" << endl;
-        buildTree(devidedArray, count);
+        reverseArrayFrom(myBinaryTree, count, firstNonNumber);
+        // printTreeAsArray();
     };
 
     // void infix(){};
@@ -72,11 +63,11 @@ public:
     {
         int root = 0;
         int size = sizeof(myBinaryTree) / sizeof(myBinaryTree[0]);
-        char *myArray = new char[size];
+        char *prefixArray = new char[size];
+        prefixStep(root, prefixArray, size);
 
-        prefixStep(root, myArray, size);
         cout << "The prefix form of the expression is: ";
-        printArray(myArray, size);
+        printArray(prefixArray, size);
     };
 
     // void evalExp(){};
@@ -119,32 +110,35 @@ public:
 
     void printTree()
     {
-        for (int i = 0; i < 100; i++)
-        {
-            if (myBinaryTree[i] != '\0')
-            {
-                std::cout << static_cast<char>(myBinaryTree[i]) << " ";
+        cout << "Printing Binary Tree : " << endl;
+        for (int i = 0; i < 100; i++) {
+            if (myBinaryTree[i] != '\0') {
+                std::cout << static_cast<char>(myBinaryTree[i]) << " "; 
+            } else {
+                break;
             }
-            if (i == 0 || i == 2 || i == 6 || i == 14 || i == 30 || i == 62)
-            {
+
+            if (i == 0 || i == 2 || i == 6 || i == 14 || i == 30 || i == 62) {
                 std::cout << std::endl;
             }
         }
+        cout << endl;
     }
     void printTreeAsArray()
     {
-        cout << "Printing Binary Tree As Array" << endl;
+        cout << "Printing Binary Tree As Array : " ;
         for (int i = 0; i < 100; i++)
         {
             if (myBinaryTree[i] != '\0')
             {
-                std::cout << static_cast<char>(myBinaryTree[i]) << " ";
+                std::cout << myBinaryTree[i] << " ";
             }
         }
+        cout << endl;
     }
 
 private:
-    int myBinaryTree[100];
+    char myBinaryTree[100];
 
     int findParent(int index)
     {
@@ -159,14 +153,14 @@ private:
         return (2 * index) + 2;
     };
 
-    void prefixStep(int root, char returnedArray[], int& index)
-    {
+    void prefixStep(int root, char returnedPrefixArray[], int &index) {
         char currentChildElement = myBinaryTree[root];
-        if (currentChildElement != '\0') {
-            returnedArray[index++] = myBinaryTree[root];
+        if (currentChildElement != '\0')
+        {
+            returnedPrefixArray[index++] = myBinaryTree[root];
 
-            prefixStep(findLeftChild(root), returnedArray, index);
-            prefixStep(findRightChild(root), returnedArray, index);
+            prefixStep(findLeftChild(root), returnedPrefixArray, index);
+            prefixStep(findRightChild(root), returnedPrefixArray, index);
         }
     }
 
@@ -197,33 +191,33 @@ private:
 
     void printArray(char array[], int size)
     {
-        for (int i = 0; i < size; i++)
-        {
-            cout << array[i] << " ";
+        for (int i = 0; i < size; i++) {
+            if (myBinaryTree[i] != '\0') {
+                cout << array[i] << " ";
+            }
         }
         cout << endl;
     }
-
-
     void buildTree(char array[], int size) {
-        for (int i = 0; i < size; i++) {
-            if (i == 0) {
+        int i = 0;
+        while (array[i * 2 + 1] != '\0')
+        {
+            if (i == 0)
+            {
                 setRoot(array[i]);
+                set_left(array[(i * 2) + 1], findParent(i));
+                set_right(array[(i * 2) + 2], findParent(i));
             }
-
-            else {
-                if (i % 2 == 0) {
-                    set_right(array[i], findParent(i));
-                }
-                else {
-                    set_left(array[i], findParent(i));
-                }
+            else
+            {
+                set_left(array[(i * 2) + 1], i);
+                set_right(array[(i * 2) + 2], i);
             }
+            i++;
         }
     }
 
-
-    void reverseArray(char *arr, int size, int firstNonNumber)
+    void reverseArrayFrom(char *arr, int size, int firstNonNumber)
     {
         int start = firstNonNumber + 1;
         int end = size - 1;
