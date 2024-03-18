@@ -43,10 +43,20 @@ public:
                 cout << i << " : " << exp[i] << " is not a digit " << endl;
                 addToFirstInArray(exp[i], devidedArray,count);
             }
+
             cout << "---\nThe devided array is: ";
             printArray(devidedArray, count);
         }
-        
+
+        int firstNonNumber = 0;
+        for(int i = count; i > 0; i--){
+            if(!isdigit(myBinaryTree[i])){
+                firstNonNumber = i;
+            }
+        }   
+        cout << "firstNonNumber: " << firstNonNumber << endl;
+        reverseArray(devidedArray, count, firstNonNumber);
+                
         cout << "building tree" << endl;
         buildTree(devidedArray, count);
     };
@@ -173,4 +183,17 @@ private:
         }
     }
     
+    void reverseArray(char* arr, int size, int firstNonNumber) {
+            int start = firstNonNumber + 1;
+            int end = size - 1;
+
+            while (start < end) {
+                char temp = arr[start];
+                arr[start] = arr[end];
+                arr[end] = temp;
+                start++;
+                end--;
+            }
+        }
+
 };
