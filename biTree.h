@@ -153,14 +153,14 @@ private:
         return (2 * index) + 2;
     };
 
-    void prefixStep(int root, char returnedPrefixArray[], int &index) {
+    void prefixStep(int root, char returnedPrefixArray[], int &sizeOfPreArray) {
         char currentChildElement = myBinaryTree[root];
-        if (currentChildElement != '\0')
-        {
-            returnedPrefixArray[index++] = myBinaryTree[root];
+        if (currentChildElement != '\0') {
+            addToFirstInArray(myBinaryTree[root],returnedPrefixArray,sizeOfPreArray);
+            
 
-            prefixStep(findLeftChild(root), returnedPrefixArray, index);
-            prefixStep(findRightChild(root), returnedPrefixArray, index);
+            prefixStep(findLeftChild(root), returnedPrefixArray, sizeOfPreArray);
+            prefixStep(findRightChild(root), returnedPrefixArray, sizeOfPreArray);
         }
     }
 
