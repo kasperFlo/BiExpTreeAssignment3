@@ -31,46 +31,65 @@ public:
 
         int count = exp.length();
         cout << "The length of the expression is: " << count << endl;
+        cout << "The expression is: " << exp << endl;
 
         char *devidedArray = new char[count];
 
-        for (int i = 0; i < count; i++) {
-            if (isdigit(exp[i])) {
-                cout << "element Num " << i << " : " << exp[i] << " is a digit " << endl;
+        for (int i = 0; i < count; i++)
+        {
+            if (isdigit(exp[i]))
+            {
+                // cout << "element Num " << i << " : " << exp[i] << " is a digit " << endl;
                 addToLastInArray(exp[i], devidedArray, count);
             }
-            else {
-                cout << i << " : " << exp[i] << " is not a digit " << endl;
-                addToFirstInArray(exp[i], devidedArray,count);
+            else
+            {
+                // cout << i << " : " << exp[i] << " is not a digit " << endl;
+                addToFirstInArray(exp[i], devidedArray, count);
             }
-
-            cout << "---\nThe devided array is: ";
-            printArray(devidedArray, count);
+            // cout << "---\nThe devided array is: ";
+            // printArray(devidedArray, count);
         }
 
         int firstNonNumber = 0;
-        for(int i = count; i > 0; i--){
-            if(!isdigit(myBinaryTree[i])){
+        for (int i = count; i > 0; i--)
+        {
+            if (!isdigit(myBinaryTree[i]))
+            {
                 firstNonNumber = i;
             }
-        }   
-        cout << "firstNonNumber: " << firstNonNumber << endl;
+        }
         reverseArray(devidedArray, count, firstNonNumber);
-                
+
         cout << "building tree" << endl;
         buildTree(devidedArray, count);
     };
 
     // void infix(){};
+    // displays the prefix form of the expression stored in the calling myBinaryTree
+
+    void prefix()
+    {
+        int root = 0;
+        int size = sizeof(myBinaryTree) / sizeof(myBinaryTree[0]);
+        char *myArray = new char[size];
+
+        prefixStep(root, myArray, size);
+        cout << "The prefix form of the expression is: ";
+        printArray(myArray, size);
+    };
+
     // void evalExp(){};
 
     template <class T>
-    void setRoot(T key) {
+    void setRoot(T key)
+    {
         myBinaryTree[0] = key;
     }
 
     template <class T>
-    int set_left(T key, int parent) {
+    int set_left(T key, int parent)
+    {
         if (myBinaryTree[parent] == '\0')
         { // checks if parent is empty or not
             cout << "\nCan't set child at " << (parent * 2) + 1 << " , no parent found" << endl;
@@ -84,7 +103,8 @@ public:
     }
 
     template <class T>
-    int set_right(T key, int parent) {
+    int set_right(T key, int parent)
+    {
         if (myBinaryTree[parent] == '\0')
         {
             cout << "\nCan't set child at " << (parent * 2) + 1 << " , no parent found" << endl;
@@ -97,27 +117,32 @@ public:
         }
     }
 
-    void printTree() {
+    void printTree()
+    {
         for (int i = 0; i < 100; i++)
         {
-            if (myBinaryTree[i] != '\0') {
+            if (myBinaryTree[i] != '\0')
+            {
                 std::cout << static_cast<char>(myBinaryTree[i]) << " ";
             }
-            if (i == 0 || i == 2 || i == 6 || i == 14 || i == 30 || i == 62) {
+            if (i == 0 || i == 2 || i == 6 || i == 14 || i == 30 || i == 62)
+            {
                 std::cout << std::endl;
             }
         }
     }
-    void printTreeAsArray() {
+    void printTreeAsArray()
+    {
         cout << "Printing Binary Tree As Array" << endl;
-            for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 100; i++)
+        {
+            if (myBinaryTree[i] != '\0')
             {
-                if (myBinaryTree[i] != '\0') {
-                    std::cout << static_cast<char>(myBinaryTree[i]) << " ";
-                }
+                std::cout << static_cast<char>(myBinaryTree[i]) << " ";
             }
         }
-    
+    }
+
 private:
     int myBinaryTree[100];
 
@@ -134,17 +159,25 @@ private:
         return (2 * index) + 2;
     };
 
-    void addToFirstInArray(const char exp, char array[],int _size)
+    void prefixStep(int root, char returnedArray[], int& index)
     {
-        if (array[0] == '\0') {
-            array[0] = exp;
+        char currentChildElement = myBinaryTree[root];
+        if (currentChildElement != '\0') {
+            returnedArray[index++] = myBinaryTree[root];
+
+            prefixStep(findLeftChild(root), returnedArray, index);
+            prefixStep(findRightChild(root), returnedArray, index);
         }
-        else {
-            for (int i = 0; i < _size; i++) {
-                if (array[i] == '\0') {
-                    array[i] = exp;
-                    break;
-                }
+    }
+
+    void addToFirstInArray(const char exp, char array[], int _size)
+    {
+        for (int i = 0; i < _size; i++)
+        {
+            if (array[i] == '\0')
+            {
+                array[i] = exp;
+                break;
             }
         }
     }
@@ -152,20 +185,26 @@ private:
     {
         int size = _size;
 
-        for (int i = size - 1; i > 0; i--) {
-            if (array[i] == '\0') {
+        for (int i = size - 1; i > 0; i--)
+        {
+            if (array[i] == '\0')
+            {
                 array[i] = exp;
                 break;
             }
         }
     }
 
-    void printArray(char array[], int size) {
-        for (int i = 0; i < size; i++) {
-            cout << array[i] << ",";
+    void printArray(char array[], int size)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            cout << array[i] << " ";
         }
-        cout<<endl;
+        cout << endl;
     }
+
+
     void buildTree(char array[], int size) {
         for (int i = 0; i < size; i++) {
             if (i == 0) {
@@ -182,18 +221,20 @@ private:
             }
         }
     }
-    
-    void reverseArray(char* arr, int size, int firstNonNumber) {
-            int start = firstNonNumber + 1;
-            int end = size - 1;
 
-            while (start < end) {
-                char temp = arr[start];
-                arr[start] = arr[end];
-                arr[end] = temp;
-                start++;
-                end--;
-            }
+
+    void reverseArray(char *arr, int size, int firstNonNumber)
+    {
+        int start = firstNonNumber + 1;
+        int end = size - 1;
+
+        while (start < end)
+        {
+            char temp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = temp;
+            start++;
+            end--;
         }
-
+    }
 };

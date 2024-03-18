@@ -9,9 +9,9 @@ int main() {
     BiExpTree *thing = new BiExpTree(); // Create a pointer to BiExpTree object
     
     thing->createExp("3+4*5");
-    thing->printTree();
+    thing->prefix();
     thing->printTreeAsArray();
-
+    // thing->printTree();
 
     return 0;
 }
