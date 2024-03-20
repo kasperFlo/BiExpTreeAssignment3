@@ -62,7 +62,7 @@ public:
 
 template <typename T>
 class BT {
-    private:
+private:
         BTNode<T>* root;
         /* Function to insert data recursively */
         BTNode<T>* insert(BTNode<T>* node, T data) {
@@ -197,8 +197,8 @@ class BT {
             while (index < exp.length()) { // base case
 
                 if (exp[index] == '(') {
-                    BTNode<T> *subTreeRoute = createNode(exp, index+=1);
-                    operandsStack->push(subTreeRoute);
+                    // BTNode<T> *subTreeRoute = createNode(exp, index+=1);
+                    operandsStack->push(createNode(exp, index+=1));
 
                 } else if (exp[index] == ')') {
 
@@ -216,35 +216,42 @@ class BT {
                     index++;
 
                 } else if (isOperator(exp[index])) { // Operator
-                    while (!operatorStack->empty() &&
-                           getOperatorPrecedence(exp[index]) <= getOperatorPrecedence(operatorStack->top()->getData())) {
+
+                    while (!operatorStack->empty() && 
+                            getOperatorPrecedence(exp[index]) <= getOperatorPrecedence(operatorStack->top()->getData())) {
+
                         BTNode<T> *OperatorNode = new BTNode<T>(operatorStack->top());
+                        operatorStack->pop();
+                        
                         OperatorNode->left = operandsStack->top();
                         operandsStack->pop();
-
                         OperatorNode->right = operandsStack->top();
                         operandsStack->pop();
                     }
-                    BTNode<T> *operatorNode = new BTNode<T>(exp[index]); // Assuming only single-digit operands
-                    operatorStack->push(operatorNode);
+                    // BTNode<T> *operatorNode = new BTNode<T>(exp[index]); // Assuming only single-digit operands
+                    operatorStack->push(new BTNode<T>(exp[index]));
                     index++;
 
-                    // return OperatorNode;
                 } else { // Number/Operand
-                    BTNode<T> *leafNode = new BTNode<T>(exp[index]); // Assuming only single-digit operands
+                    // BTNode<T> *leafNode = new BTNode<T>(exp[index]); // Assuming only single-digit operands
+                    operandsStack->push(new BTNode<T>(exp[index]));
                     index++;
-                    operandsStack->push(leafNode);
-                    // return leafNode; //might not be necessary
                 }
             }
-            return operandsStack->top();
+            BTNode<T>* toBeReturnedTreeNode = new BTNode<T>();
+            toBeReturnedTreeNode = operandsStack->top();
+            operandsStack->pop();
+            return toBeReturnedTreeNode;
         }
 
         void prefix(){}
         void infix(){}
         void evalExp(){}
 
-    };
+    ~BT() {
+        delete root;
+    }
+};
 
 
 int main() {
