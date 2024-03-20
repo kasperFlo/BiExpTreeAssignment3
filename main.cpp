@@ -63,8 +63,7 @@ public:
 template <typename T>
 class BT {
     private:
-        BTNode<T> root;
-
+        BTNode<T>* root;
         /* Function to insert data recursively */
         BTNode<T>* insert(BTNode<T>* node, T data) {
             if (node == nullptr)
@@ -187,57 +186,64 @@ class BT {
 
         void createExp(string exp) {
             int index = 0;
-
-            stack<char> operatorStack;
-            stack<BTNode<T>*> operandsStack;
-
-            BTNode<T>* root = createNode(exp, index, operatorStack, operandsStack);
+            BTNode<T>* expRoot = createNode(exp, index);
+            root = expRoot;
         }
 
-        BTNode<T>* createNode(string exp, int& index, stack<char>& operatorStack, stack<BTNode<T>*>& operandsStack) {
-            if (index >= exp.length()) { // base case
-                return nullptr;
-            } else if (exp[index] == '(') {
-                index++;
-                BTNode<T>* subTreeRoute = createNode(exp, index, operatorStack, operandsStack);
-                return subTreeRoute;
-            } else if (exp[index] == ')') {
+        BTNode<T>* createNode(string exp, int& index) {
+            stack<BTNode<T>*> *operatorStack = new stack<BTNode<T>*>();
+            stack<BTNode<T>*> *operandsStack = new stack<BTNode<T>*>();
 
-                while (!operatorStack.empty() && getOperatorPrecedence(exp[index]) <= getOperatorPrecedence(operatorStack.top())) {
-                    BTNode<T>* newNode = new BTNode<T>(operatorStack.top());
-                    operatorStack.pop();
-                    newNode->left = operandsStack.top();
-                    operandsStack.pop();
-                    newNode->right = operandsStack.top();
-                    operandsStack.pop();
+            while (index < exp.length()) { // base case
+
+                if (exp[index] == '(') {
+                    BTNode<T> *subTreeRoute = createNode(exp, index+=1);
+                    operandsStack->push(subTreeRoute);
+
+                } else if (exp[index] == ')') {
+
+                    while (!operatorStack->empty() && getOperatorPrecedence(exp[index]) <= getOperatorPrecedence(operatorStack->top()->getData() )) {
+                        BTNode<T> *newNode = new BTNode<T>(operatorStack->top()->getData());
+                        operatorStack->pop();
+                        newNode->right = operandsStack->top();
+                        operandsStack->pop();
+                        newNode->left = operandsStack->top();
+                        operandsStack->pop();
+
+                        operandsStack->push(newNode);
+                        return newNode;
+                    }
+                    index++;
+
+                } else if (isOperator(exp[index])) { // Operator
+                    while (!operatorStack->empty() &&
+                           getOperatorPrecedence(exp[index]) <= getOperatorPrecedence(operatorStack->top()->getData())) {
+                        BTNode<T> *OperatorNode = new BTNode<T>(operatorStack->top());
+                        OperatorNode->left = operandsStack->top();
+                        operandsStack->pop();
+
+                        OperatorNode->right = operandsStack->top();
+                        operandsStack->pop();
+                    }
+                    BTNode<T> *operatorNode = new BTNode<T>(exp[index]); // Assuming only single-digit operands
+                    operatorStack->push(operatorNode);
+                    index++;
+
+                    // return OperatorNode;
+                } else { // Number/Operand
+                    BTNode<T> *leafNode = new BTNode<T>(exp[index]); // Assuming only single-digit operands
+                    index++;
+                    operandsStack->push(leafNode);
+                    // return leafNode; //might not be necessary
                 }
-                index++;
-
-            } else if (isOperator(exp[index])) { // Operator
-
-                while (!operatorStack.empty() && getOperatorPrecedence(exp[index]) <= getOperatorPrecedence(operatorStack.top())) {
-                    BTNode<T>* OperatorNode = new BTNode<T>(operatorStack.top());
-                    OperatorNode->left = operandsStack.top();
-                    operandsStack.pop();
-
-                    OperatorNode->right = operandsStack.top();
-                    operandsStack.pop();
-                }
-                operatorStack.push(exp[index]);
-                index++;
-
-                // return OperatorNode;
-            } else { // Number/Operand
-                BTNode<T>* leafNode = new BTNode<T>(exp[index]); // Assuming only single-digit operands
-                index++;
-                operandsStack.push(leafNode);
-                // return leafNode; //might not be necessary
             }
+            return operandsStack->top();
         }
 
         void prefix(){}
         void infix(){}
         void evalExp(){}
+
     };
 
 
@@ -245,8 +251,8 @@ int main() {
     cout << "---- Starting ------" << endl;
     BT<int> expTree;
 
-    expTree.createExp("(1+2)*(3*6)");
-//    exp
+    expTree.createExp("((1+2)*(3*6))");
+
     
     return 0;
 }
